@@ -46,7 +46,7 @@
             box-shadow: 0 4px 6px rgba(0,0px,0,0.05);
         }
         table {
-            width: 100%;
+            width: 98%;
             border-collapse: collapse;
             margin-bottom: 20px;
             font-size: 0.95em;
@@ -64,7 +64,7 @@
         .high-energy { background-color: #fadbd8; } /* 高耗能 - 淺紅 */
         .med-energy { background-color: #fdebd0; }  /* 中耗能 - 淺橘 */
         .low-energy { background-color: #d5f5e3; }  /* 低耗能 - 淺綠 */
-        .rest { background-color: #eaeded; color: #7f8c8d; font-weight: bold; } /* 休息 */
+        .rest { background-color: #eaeded; color: #070808; font-weight: bold; } /* 休息 */
         .counseling { background-color: #d7bde2; font-weight: bold; color: #4a235a; } /* 諮商 */
         .week-col { text-align: center; font-weight: bold; background-color: #f8f9fa; }
         .exam-row { background-color: #fadbd8; font-weight: bold; text-align: center; color: #c0392b; }
@@ -89,7 +89,7 @@
 
     <div class="section">
         <h2>⏱️ 每日固定作息與能量分級表 (Time Blocking)</h2>
-        <p>考量早晨無法早起，作息從 10:30 開始；週四晚間 18:00 固定心理諮商；週末下午後完全休息，不逼迫自己 [5, 6]。</p>
+        <p>考量早晨無法早起，作息從 10:30 開始；週四晚間 18:00 固定心理諮商；週末下午後完全休息，不逼迫自己，每次雖都是兩小時以上，但以蕃茄鐘方式為主，執行50min，休息10min。</p>
         
         <table>
             <thead>
@@ -105,54 +105,98 @@
                 </tr>
             </thead>
             <tbody>
+
                 <tr>
-                    <td><strong>10:30 - 12:30</strong><br>(晨間喚醒 / 高耗能)</td>
-                    <td class="high-energy">生物：Campbell<br>(概念理解)</td>
-                    <td class="high-energy">化學：Zumdahl<br>(概念理解)</td>
-                    <td class="high-energy">生物：Campbell<br>(概念理解)</td>
-                    <td class="high-energy">化學：Zumdahl<br>(概念理解)</td>
+                    <td><strong>10:30 - 12:00</strong></td>
+                    <td colspan="7" class="rest">早餐與放鬆 (啟動中，提升能量)</td>
+                </tr>
+                <tr>
+                    <td><strong>12:00 - 14:00</strong><br>(晨間喚醒 / 高耗能)</td>
+                    <td class="high-energy">生物：Campbell/講義<br>(概念理解)</td>
+                    <td class="high-energy">化學：Zumdahl/講義<br>(概念理解)</td>
+                    <td class="high-energy">生物：Campbell/講義<br>(概念理解)</td>
+                    <td class="high-energy">化學：Zumdahl/講義<br>(概念理解)</td>
                     <td class="high-energy">雅思寫作<br>(圖表/申論架構)</td>
                     <td class="med-energy">本週進度補救<br>(彈性緩衝)</td>
                     <td class="low-energy">填寫12週積分板<br>回顧與計畫</td>
                 </tr>
+                
                 <tr>
-                    <td><strong>12:30 - 14:00</strong></td>
-                    <td colspan="7" class="rest">午餐與午休放鬆 (完全斷電，保護能量)</td>
-                </tr>
-                <tr>
-                    <td><strong>14:00 - 16:30</strong><br>(午後 / 中耗能)</td>
-                    <td class="med-energy">雅思閱讀<br>(長篇實戰檢討)</td>
+                    <td><strong>14:00 - 16:00</strong><br>(午後 / 中耗能)</td>
+                    <td class="med-energy">雅思/私醫英文閱讀<br>(長篇實戰檢討)</td>
                     <td class="med-energy">國文/醫古文<br>(生難字詞與翻譯)</td>
                     <td class="med-energy">生物/化學<br>(課後習題與筆記)</td>
                     <td class="med-energy">國文/醫古文<br>(生難字詞與翻譯)</td>
-                    <td class="med-energy">雅思閱讀<br>(長篇實戰檢討)</td>
-                    <td class="rest" rowspan="4">完全休息<br>(追劇/散步/放空)<br>不安排任何讀書</td>
-                    <td class="rest" rowspan="4">完全休息<br>(為下週儲備能量)</td>
+                    <td class="med-energy">雅思/私醫英文閱讀<br>(長篇實戰檢討)</td>
+                    <td class="rest" rowspan="1" style="text-align: center;">完全休息<br>(追劇/運動)<br>不安排任何讀書</td>
+                    <td class="rest" rowspan="1" style="text-align: center;">完全休息<br>(為下週儲備能量)</td>
+                    
                 </tr>
                 <tr>
-                    <td><strong>16:30 - 18:00</strong><br>(轉換期 / 低耗能)</td>
-                    <td class="low-energy">英文單字 100 字</td>
-                    <td class="low-energy">雅思聽力/口說<br>(跟讀/Podcast)</td>
-                    <td class="low-energy">英文單字 100 字</td>
-                    <td class="low-energy">雅思聽力/口說<br>(跟讀/Podcast)</td>
-                    <td class="low-energy">英文單字 100 字</td>
+                    <td><strong>16:00 - 18:00</strong><br>(轉換期 / 低耗能)</td>
+                    <td class="low-energy">運動+洗澡</td>
+                    <td class="low-energy">運動+洗澡</td>
+                    <td class="low-energy">運動+洗澡</td>
+                    <td class="low-energy">運動+洗澡</td>
+                    <td class="low-energy">運動+洗澡</td>
+                    <td style="font-weight: bold;">🏋️ 運動時間</td>
+                    <td  style="font-weight: bold;">🏋️ 運動時間</td>
                 </tr>
                 <tr>
-                    <td><strong>18:00 - 19:30</strong></td>
-                    <td class="rest">晚餐與休息</td>
-                    <td class="rest">晚餐與休息</td>
-                    <td class="rest">晚餐與休息</td>
-                    <td class="counseling">18:00 心理諮商</td>
-                    <td class="rest">晚餐與休息</td>
-                </tr>
+    <td style="text-align: center;"><strong>18:00 - 19:00</strong></td>
+    <td class="rest" style="background-color: #1bbce4; text-align: center;">背英文單字35個<br>複習單字35個</td>
+    <td class="rest" style="background-color: #1bbce4;text-align: center;">背英文單字35個<br>複習單字35個</td>
+    <td class="rest" style="background-color: #1bbce4;text-align: center;">背英文單字35個<br>複習單字35個</td>
+    <td class="counseling" style="text-align: center;">18:00 心理諮商</td>
+    <td class="rest">晚餐與休息</td>
+    <td class="rest" style="text-align: center;">完全休息<br>(追劇/運動)<br>不安排任何讀書</td>
+    <td class="rest" style="text-align: center;">完全休息<br>(為下週儲備能量)</td>
+</tr>
+<!--暫時用不到的運動補強區塊，先註解掉
+<tr>
+    <td style="background-color: #ecf0f1;"><strong>運動補強</strong></td>
+    <td colspan="5" class="low-energy">（此時段為週間彈性區）</td>
+    <td style="font-weight: bold; background-color: #ffffff;">🏋️ 運動時間</td>
+    <td style="font-weight: bold; background-color: #ffffff;">🏋️ 運動時間</td>
+</tr>
+-->
+<!--
                 <tr>
-                    <td><strong>19:30 - 21:00</strong><br>(晚間 / 極低耗能)</td>
+                    <td><strong>20:00 - 21:00</strong><br>(晚間 / 極低耗能)</td>
                     <td class="low-energy">程式課程<br>(結束後轉休閒)</td>
                     <td class="low-energy">程式實作<br>(結束後轉休閒)</td>
                     <td class="low-energy">程式課程<br>(結束後轉休閒)</td>
                     <td class="rest">諮商後沉澱身心<br>(純休息)</td>
                     <td class="low-energy">整理筆記<br>或 準備放假</td>
                 </tr>
+            -->
+
+                <tr>
+    <td><strong>19:00 - 20:30</strong><br>(晚間 / 極低耗能)</td>
+    <td class="low-energy">晚餐＋休息</td>
+    <td class="low-energy">晚餐＋休息</td>
+    <td class="low-energy">晚餐＋休息</td>
+    <td class="rest">諮商後沉澱身心<br>(純休息)</td>
+    <td class="low-energy">彈性休息</td>
+    <td class="rest">（休息）</td>
+    <td class="rest">（休息）</td>
+</tr>
+
+<tr>
+    <td><strong>20:30 - 23:30</strong><br>(晚間讀書時間)</td>
+    <td class="low-energy">化學：Zumdahl/講義</td>
+    <td class="low-energy">生物：Campbell/講義</td>
+    <td class="low-energy">化學：Zumdahl/講義</td>
+    <td class="low-energy">生物：Campbell/講義</td>
+    <td class="low-energy">彈性休息</td>
+    <td class="rest">自由時間</td>
+    <td class="rest">自由時間</td>
+</tr>
+
+<tr>
+    <td><strong>23:30 - 12:30</strong><br>(待機)</td>
+    <td colspan="7" class="rest">文殊心咒＋準提神咒10遍＋滑手機</td>
+</tr>
             </tbody>
         </table>
         <p><em>註：若當天情緒低落，請直接將「高/中耗能」任務降級為聽廣播或背單字，保持「只要有開始就好」的心態，切勿自責 [7, 8]。</em></p>
