@@ -72,9 +72,146 @@
         ul { padding-left: 25px; }
         li { margin-bottom: 8px; }
         .highlight { font-weight: bold; color: #c0392b; }
+        
+        /* 互動式功能列與控制樣式 */
+        .planner-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 15px 25px;
+            margin: -20px -20px 25px -20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-radius: 0 0 10px 10px;
+        }
+        .planner-toolbar h2 {
+            margin: 0;
+            padding: 0;
+            border-left: none;
+            background: transparent;
+            font-size: 1.25rem;
+            color: #1a5276;
+        }
+        .toolbar-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn-group {
+            display: flex;
+            background: #f0f3f4;
+            border: 1px solid #d5dbdb;
+            border-radius: 8px;
+            padding: 3px;
+        }
+        .btn-mode {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #7f8c8d;
+            transition: all 0.2s ease;
+        }
+        .btn-mode.active {
+            background: #ffffff;
+            color: #2980b9;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn-action {
+            border: 1px solid #2980b9;
+            background: #ffffff;
+            color: #2980b9;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        .btn-action:hover {
+            background: #2980b9;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(41, 128, 185, 0.2);
+        }
+        .btn-reset {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .btn-reset:hover {
+            background: #e74c3c;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.2);
+        }
+        
+        /* 編輯模式儲存格樣式 */
+        body.mode-edit td.interactive {
+            position: relative;
+            cursor: text;
+        }
+        body.mode-edit td.interactive:hover {
+            background-color: rgba(41, 128, 185, 0.08) !important;
+            outline: 2px dashed #2980b9;
+            outline-offset: -2px;
+        }
+        body.mode-edit td.interactive:focus {
+            background-color: #ffffff !important;
+            outline: 2px solid #2980b9;
+            outline-offset: -2px;
+            box-shadow: 0 0 10px rgba(41, 128, 185, 0.25);
+        }
+        
+        /* 拖曳模式儲存格樣式 */
+        body.mode-drag td.interactive {
+            cursor: grab;
+            user-select: none;
+            transition: background-color 0.15s ease;
+        }
+        body.mode-drag td.interactive:hover {
+            background-color: rgba(46, 204, 113, 0.15) !important;
+            outline: 2px dashed #2ecc71;
+            outline-offset: -2px;
+        }
+        body.mode-drag td.interactive:active {
+            cursor: grabbing;
+        }
+        body.mode-drag td.interactive.dragging {
+            opacity: 0.4;
+            outline: 2px dashed #e67e22;
+        }
+        body.mode-drag td.interactive.drag-over {
+            background-color: rgba(52, 152, 219, 0.25) !important;
+            outline: 2px solid #3498db;
+            outline-offset: -2px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Planner Interactive Toolbar -->
+    <div class="planner-toolbar">
+        <h2>🛠️ 互動式計畫表控制台</h2>
+        <div class="toolbar-controls">
+            <div class="btn-group">
+                <button id="btn-mode-view" class="btn-mode active" onclick="window.setMode('view')">👁️ 唯讀模式</button>
+                <button id="btn-mode-edit" class="btn-mode" onclick="window.setMode('edit')">📝 編輯模式</button>
+                <button id="btn-mode-drag" class="btn-mode" onclick="window.setMode('drag')">🔄 拖曳模式</button>
+            </div>
+            <button class="btn-action" onclick="window.exportHTML()">💾 匯出並下載 HTML</button>
+            <button class="btn-action btn-reset" onclick="window.resetPlanner()">🧹 重設資料</button>
+        </div>
+    </div>
 
     <h1>🌟 三年期私醫中醫與雅思雙軌穩健計畫：低耗能 12 週工作法實踐</h1>
 
@@ -100,7 +237,7 @@
             🔹 <strong>科休：一科結束後，利用區塊最後的 10 分鐘進行大休息</strong>，喝水走動，再進入下一個科目。
         </div>
 
-        <table>
+        <table id="table-daily">
             <thead>
                 <tr>
                     <th>時間 / 星期</th>
@@ -124,7 +261,7 @@
                     <td class="high-energy">化學：舊私醫題庫</td>
                     <td class="high-energy">生物：貓咪書/考古</td>
                     <td class="high-energy">化學：舊私醫題庫</td>
-                    <td class="high-energy">雅思寫作(架構)</td>
+                    <td class="high-energy">生物：貓咪書/考古</td>
                     <td class="med-energy">本週進度補救</td>
                     <td class="low-energy">填寫12週積分板</td>
                 </tr>
@@ -144,7 +281,7 @@
                     <td class="med-energy">國文/醫古文</td>
                     <td class="med-energy">雅思閱讀實戰</td>
                     <td class="med-energy">國文/醫古文</td>
-                    <td class="med-energy">私醫考古(英)</td>
+                    <td class="med-energy">化學筆記</td>
                      
                 </tr>
                 <tr>
@@ -157,7 +294,7 @@
                     <td class="med-energy">雅思閱讀檢討</td>
                     <td class="med-energy">私醫考古(英)</td>
                     <td class="med-energy">雅思閱讀檢討</td>
-                    <td class="med-energy">生物/化學(課後筆記)</td>
+                    <td class="med-energy">生物(課後筆記)</td>
                 </tr>
                 <tr>
                     <td><strong>15:00 - 16:00</strong><br>(午後 2 / 中耗能)</td>
@@ -165,7 +302,7 @@
                     <td class="med-energy">私醫考古(英)</td>
                     <td class="med-energy">國文/醫古文</td>
                     <td class="med-energy">2014轉考考古(英)</td>
-                    <td class="med-energy">生物/化學(課後筆記)</td>
+                    <td class="med-energy">私醫考古（英）</td>
                     
                 </tr>
                 <tr>
@@ -175,19 +312,19 @@
                     <td class="low-energy">🏋️運動+洗澡</td>
                     <td class="low-energy">🏋️運動+洗澡</td>
                     <td class="low-energy">🏋️運動+洗澡</td>
-                    <td style="font-weight: bold;">🏋️ 運動+洗澡</td>
-                    <td style="font-weight: bold;">🏋️ 運動＋洗澡</td>
+                    <td class="rest" style="font-weight: bold;">🏋️ 運動+洗澡</td>
+                    <td class="rest" style="font-weight: bold;">🏋️ 運動＋洗澡</td>
                     
                     
 
                 </tr>
                 <tr>
                     <td><strong>18:00 - 19:00</strong></td>
-                    <td class="rest" style="background-color: #1bbce4;">背英文單字35個<br>複習單字35個</td>
-                    <td class="rest" style="background-color: #1bbce4;">背英文單字35個<br>複習單字35個</td>
-                    <td class="rest" style="background-color: #1b97e4;">背英文單字35個<br>複習單字35個</td>
-                    <td class="rest" style="background-color: #1b97e4;">背英文單字35個<br>複習單字35個</td>
-                    <td class="rest">彈性休息</td>
+                    <td class="rest" style="background-color: #edf642;">背英文單字35個<br>複習單字35個</td>
+                    <td class="rest" style="background-color: #edf642;">背英文單字35個<br>複習單字35個</td>
+                    <td class="rest" style="background-color: #65e9f3;">背英文單字35個<br>複習單字35個</td>
+                    <td class="rest" style="background-color: #65e9f3;">背英文單字35個<br>複習單字35個</td>
+                     <td class="rest" style="background-color: #ef7ef7fc;">背英文單字35個<br>複習單字35個</td>
                     <td class="rest" rowspan="1" style="text-align: center;">晚餐＋休息</td>
                     <td class="rest" rowspan="" style="text-align: center;">晚餐＋休息</td> 
                 </tr>
@@ -243,7 +380,7 @@
         <!-- ================= 第一年 ================= -->
         <h3>🟢 第一部分：基礎全覆蓋與初次實戰 ( 1 - 12 週)</h3>
         <p>重點：打底期。走過基礎章節，不求死背，先求看懂。生物先跳過普化章節(Ch2-4)。英文以雅思閱讀與2014轉考考古熟悉手感為主。</p>
-        <table>
+        <table id="table-weekly-1">
             <tr>
                 <th width="8%">週次</th>
                 <th width="23%">生物 (Campbell)</th>
@@ -330,7 +467,7 @@
         <!-- ================= 第二年 ================= -->
         <h3>🟡 第二部分：強化英生化與雅思衝刺 ( 13 - 24 週)</h3>
         <p>重點：二刷理科重點單元，雅思閱讀與私醫英文考古進入高強度實戰。</p>
-        <table>
+        <table id="table-weekly-2">
             <tr>
                 <th width="8%">週次</th>
                 <th width="23%">生物 (Campbell 第二刷)</th>
@@ -417,7 +554,7 @@
         <!-- ================= 第三年 ================= -->
         <h3>🔴 第三部分：極致輸出與上榜衝刺 ( 25 - 36 週)</h3>
         <p>重點：以私醫聯招、2014轉考考古為核心，大量刷題與檢討錯題，不再從頭翻講義。</p>
-        <table>
+        <table id="table-weekly-3">
             <tr>
                 <th width="8%">週次</th>
                 <th width="23%">生物 (考古與錯題打擊)</th>
@@ -497,7 +634,7 @@
         <h3>🟢 第一年：高密度打底與初次實戰 (應考：2027年8月)</h3>
         <p><strong>目標：</strong> 前 8 週快速走完四科基礎，細節不強求死背；晚間安排 Postgres 與 Node.js 程式進度，直到 6/30 前完結。 <br>
         <strong>能量提醒：</strong> 若精神極差，優先確保「雅思單字」與「看懂理科大標題」即可。</p>
-        <table>
+        <table id="table-weekly-2027">
             <tr>
                 <th width="6%">週次</th>
                 <th width="22%">生物 (Campbell 8大單元)</th>
@@ -582,7 +719,7 @@
         <!-- ================= 2028 年 ================= -->
         <h3>🟡 第二年：二刷強化與提早刷題 (應考：2028年8月)</h3>
         <p><strong>目標：</strong> 前 5 週快速掃過生化重點與國文語感，第 6 週起進入密集的「考古題與特殊題型（中國醫/長庚）」訓練。</p>
-        <table>
+        <table id="table-weekly-2028">
             <tr>
                 <th width="6%">週次</th>
                 <th width="22%">生物 (二刷重點)</th>
@@ -661,7 +798,7 @@
         <!-- ================= 2029 年 ================= -->
         <h3>🔴 第三年：極致輸出與全考古題導向 (應考：2029年8月)</h3>
         <p><strong>目標：</strong> 完全以「歷屆考古題」作為核心，以戰養戰。遇到錯題再回去翻 Campbell 或 Zumdahl 的特定章節 [13, 14]。</p>
-        <table>
+        <table id="table-weekly-2029">
             <tr>
                 <th width="6%">週次</th>
                 <th width="22%">生物 (錯題打擊)</th>
@@ -746,5 +883,216 @@
         </ul>
     </div>
 
+    <script>
+        // State management
+        const state = {
+            mode: 'view', // 'view', 'edit', 'drag'
+        };
+
+        const tableIds = [
+            'table-daily',
+            'table-weekly-1',
+            'table-weekly-2',
+            'table-weekly-3',
+            'table-weekly-2027',
+            'table-weekly-2028',
+            'table-weekly-2029'
+        ];
+
+        // Load data from localStorage on start
+        function loadFromLocalStorage() {
+            tableIds.forEach(id => {
+                const savedData = localStorage.getItem('pmujte_planner_' + id);
+                if (savedData) {
+                    const table = document.getElementById(id);
+                    if (table) {
+                        table.innerHTML = savedData;
+                    }
+                }
+            });
+        }
+
+        // Save data to localStorage
+        function saveToLocalStorage() {
+            tableIds.forEach(id => {
+                const table = document.getElementById(id);
+                if (table) {
+                    localStorage.setItem('pmujte_planner_' + id, table.innerHTML);
+                }
+            });
+        }
+
+        // Reset planner to defaults
+        window.resetPlanner = function() {
+            if (confirm('確定要清除所有自訂內容並重設回預設計畫表嗎？此動作無法復原。')) {
+                tableIds.forEach(id => {
+                    localStorage.removeItem('pmujte_planner_' + id);
+                });
+                location.reload();
+            }
+        };
+
+        // Switch between interaction modes
+        window.setMode = function(mode) {
+            state.mode = mode;
+            
+            // Update active buttons
+            document.querySelectorAll('.btn-mode').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById('btn-mode-' + mode);
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            // Update body class
+            document.body.className = document.body.className.replace(/\bmode-\S+/g, '');
+            document.body.classList.add('mode-' + mode);
+            
+            // Toggle editable & draggable states
+            const allTds = document.querySelectorAll('tbody td');
+            allTds.forEach(td => {
+                if (mode === 'edit') {
+                    td.setAttribute('contenteditable', 'true');
+                    td.removeAttribute('draggable');
+                    td.classList.add('interactive');
+                } else if (mode === 'drag') {
+                    td.removeAttribute('contenteditable');
+                    
+                    // Only 1x1 cells in the daily schedule are draggable (excluding the time column)
+                    const isDaily = td.closest('#table-daily');
+                    const isFirstCol = td.parentElement.firstElementChild === td;
+                    const colSpan = td.getAttribute('colspan');
+                    const rowSpan = td.getAttribute('rowspan');
+                    const isStandardCell = (!colSpan || colSpan === '1') && (!rowSpan || rowSpan === '1');
+                    
+                    if (isDaily && !isFirstCol && isStandardCell) {
+                        td.setAttribute('draggable', 'true');
+                        td.classList.add('interactive');
+                    } else {
+                        td.removeAttribute('draggable');
+                        td.classList.remove('interactive');
+                    }
+                } else { // view mode
+                    td.removeAttribute('contenteditable');
+                    td.removeAttribute('draggable');
+                    td.classList.remove('interactive');
+                }
+            });
+        };
+
+        // Export current HTML state
+        window.exportHTML = function() {
+            // Save current mode and set to view mode for clean export
+            const currentMode = state.mode;
+            window.setMode('view');
+            
+            // Remove interactive class and helper tags from output
+            document.querySelectorAll('td').forEach(td => {
+                td.removeAttribute('contenteditable');
+                td.removeAttribute('draggable');
+                td.classList.remove('interactive', 'drag-over', 'dragging');
+            });
+            
+            // Get full HTML document string
+            const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            
+            // Restore previous mode
+            window.setMode(currentMode);
+            
+            // Create download link and trigger it
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Private Medical Universities Joint Transfer Examination.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        // Setup event delegation
+        
+        // Auto-save on edit blur
+        document.addEventListener('blur', function(e) {
+            if (state.mode === 'edit' && e.target && e.target.tagName === 'TD' && e.target.closest('table')) {
+                saveToLocalStorage();
+            }
+        }, true);
+
+        // Drag-and-drop mechanics
+        let dragSrcEl = null;
+
+        document.addEventListener('dragstart', function(e) {
+            if (state.mode !== 'drag') return;
+            const cell = e.target.closest('td');
+            if (cell && cell.getAttribute('draggable') === 'true') {
+                dragSrcEl = cell;
+                cell.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', cell.innerHTML);
+            }
+        });
+
+        document.addEventListener('dragover', function(e) {
+            if (state.mode !== 'drag') return;
+            const cell = e.target.closest('td');
+            if (cell && cell.getAttribute('draggable') === 'true') {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        document.addEventListener('dragenter', function(e) {
+            if (state.mode !== 'drag') return;
+            const cell = e.target.closest('td');
+            if (cell && cell.getAttribute('draggable') === 'true' && cell !== dragSrcEl) {
+                cell.classList.add('drag-over');
+            }
+        });
+
+        document.addEventListener('dragleave', function(e) {
+            if (state.mode !== 'drag') return;
+            const cell = e.target.closest('td');
+            if (cell) {
+                cell.classList.remove('drag-over');
+            }
+        });
+
+        document.addEventListener('drop', function(e) {
+            if (state.mode !== 'drag') return;
+            const cell = e.target.closest('td');
+            if (cell && cell.getAttribute('draggable') === 'true') {
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                }
+                if (dragSrcEl && dragSrcEl !== cell) {
+                    // Swap cell HTML contents
+                    const tempHTML = cell.innerHTML;
+                    cell.innerHTML = dragSrcEl.innerHTML;
+                    dragSrcEl.innerHTML = tempHTML;
+                    
+                    saveToLocalStorage();
+                }
+            }
+        });
+
+        document.addEventListener('dragend', function(e) {
+            const cell = e.target.closest('td');
+            if (cell) {
+                cell.classList.remove('dragging');
+            }
+            document.querySelectorAll('td').forEach(c => c.classList.remove('drag-over'));
+        });
+
+        // Initialize planner
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadFromLocalStorage();
+                window.setMode('view');
+            });
+        } else {
+            loadFromLocalStorage();
+            window.setMode('view');
+        }
+    </script>
 </body>
 </html>
