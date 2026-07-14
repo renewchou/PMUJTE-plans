@@ -1062,6 +1062,58 @@
         </ul>
     </div>
 
+    <!-- ================= 每日心情日記與記事本 (按日更新版) ================= -->
+    <div class="section" style="background: #ffffff; padding: 25px; margin-top: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0px, 0, 0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2e4053; padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="color: #2e4053; border-left: 4px solid #2e4053; background-color: #f2f4f4; padding: 10px 15px; margin: 0; display: inline-block;">📝 每日備考心情日記與隨手記</h2>
+            
+            <!-- 📅 日期切換器：讓你可以選今天，也可以回顧以前寫的日記 -->
+            <div style="display: flex; gap: 8px; align-items: center; background: #f0f3f4; border: 1px solid #d5dbdb; border-radius: 8px; padding: 6px 12px;">
+                <span style="font-size: 0.9rem; font-weight: bold; color: #2c3e50;">📅 查看日記日期：</span>
+                <input type="date" id="diary-date-picker" class="select-control" style="padding: 4px 8px; font-family: inherit;" onchange="window.switchDiaryDate()">
+            </div>
+        </div>
+        
+        <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: -5px; margin-bottom: 20px;">
+            <em>「記錄下每一天的真實感受。不論今天是滿電奮鬥、還是低耗能純躺平，這都是你前進的痕跡。換日會自動開新空白篇，你也可以透過右側選擇日期回顧歷史。」</em>
+        </p>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- 左側：今日心情日記 -->
+            <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 10px;">
+                <label style="font-weight: bold; color: #34495e; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    🌱 <span id="diary-current-date-title" style="color: #2980b9;">今日</span> 心情狀態：
+                    <select id="diary-mood" class="select-control" style="padding: 5px 10px;" onchange="window.saveDailyDiary()">
+                        <option value="🔋 滿能戰鬥！衝勁十足">🔋 滿能戰鬥！衝勁十足</option>
+                        <option value="🌤️ 穩定推進，狀態平穩" selected>🌤️ 穩定推進，狀態平穩</option>
+                        <option value="☁️ 能量稍低，緩慢保溫中">☁️ 能量稍低，緩慢保溫中</option>
+                        <option value="🪫 低電量警告，啟動完全休息">🪫 低電量警告，啟動完全休息</option>
+                        <option value="🌊 情緒波動，今天放過自己">🌊 情緒波動，今天放過自己</option>
+                    </select>
+                </label>
+                <textarea id="diary-content" placeholder="寫下今天的心情、反思，或是對自己的鼓勵...（換日後這裡會自動變回乾淨的空白頁面喔！）" 
+                    style="width: 100%; height: 180px; padding: 12px; border: 1px solid #bdc3c7; border-radius: 8px; font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;"
+                    oninput="window.saveDailyDiary()"></textarea>
+            </div>
+
+            <!-- 右側：全域隨手記事本 -->
+            <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 10px;">
+                <label style="font-weight: bold; color: #34495e;">📌 跨日備考靈感 / 待辦隨手記（全域不分天）：</label>
+                <textarea id="notes-content" placeholder="暫存一些生物、化學不懂的章節代辦，或者是突然想到的解題技巧...&#10;1. Campbell Ch 24 的物種形成圖表要再畫一次&#10;2. Zumdahl 酸鹼計算公式容易搞混，週五前要整理出來" 
+                    style="width: 100%; height: 180px; padding: 12px; border: 1px solid #bdc3c7; border-radius: 8px; font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;"
+                    oninput="window.saveDailyNotes()"></textarea>
+            </div>
+        </div>
+        <div style="text-align: right; margin-top: 10px;">
+            <span id="save-status" style="font-size: 0.85rem; color: #27ae60; font-weight: bold; opacity: 0; transition: opacity 0.3s;">✓ 已自動儲存</span>
+        </div>
+    </div>
+        </div>
+        <div style="text-align: right; margin-top: 10px;">
+            <span id="save-status" style="font-size: 0.85rem; color: #27ae60; font-weight: bold; opacity: 0; transition: opacity 0.3s;">✓ 已自動儲存</span>
+        </div>
+    </div>
+
     <script id="preloaded-data">
         window.PMUJTE_PRELOADED_DATA = {};
     </script>
@@ -1219,6 +1271,8 @@
 
             // Re-apply interactions based on active mode
             window.setMode(state.mode);
+            // 連動讀取該週的專屬日記
+            
         }
 
         // Calculate and refresh all table date labels based on starting date and display week
@@ -1425,6 +1479,109 @@
             }
         }
 
+        // 取得目前選擇的日記日期（格式：YYYY-MM-DD）
+        function getSelectedDiaryDate() {
+            const picker = document.getElementById('diary-date-picker');
+            if (picker && picker.value) {
+                return picker.value;
+            }
+            // 如果 picker 還沒初始化，預設回傳今天當地的日期
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        // 初始化日記日期選擇器，預設為「今天」
+        function initDiaryDatePicker() {
+            const picker = document.getElementById('diary-date-picker');
+            if (picker && !picker.value) {
+                const todayStr = getSelectedDiaryDate();
+                picker.value = todayStr;
+                // 設定 max 限制只能選擇今天以前的日期，不能通靈寫未來的日記
+                picker.max = todayStr;
+            }
+        }
+
+        // 顯示自動儲存打勾勾動畫
+        function flashSaveStatus() {
+            const status = document.getElementById('save-status');
+            if (status) {
+                status.style.opacity = '1';
+                if (window.saveTimeout) clearTimeout(window.saveTimeout);
+                window.saveTimeout = setTimeout(() => {
+                    status.style.opacity = '0';
+                }, 1000);
+            }
+        }
+
+        // 儲存特定日期的心情日記
+        window.saveDailyDiary = function () {
+            const dateStr = getSelectedDiaryDate();
+            const mood = document.getElementById('diary-mood').value;
+            const diary = document.getElementById('diary-content').value;
+
+            localStorage.setItem('pmujte_diary_mood_date_' + dateStr, mood);
+            localStorage.setItem('pmujte_diary_content_date_' + dateStr, diary);
+            
+            flashSaveStatus();
+        };
+
+        // 儲存隨手記（全域共用，不分天）
+        window.saveDailyNotes = function () {
+            const notes = document.getElementById('notes-content').value;
+            localStorage.setItem('pmujte_notes_content', notes);
+            flashSaveStatus();
+        };
+
+        // 載入特定日期的心情日記與全域記事本
+        function loadDailyDiaryAndNotes() {
+            initDiaryDatePicker();
+            const dateStr = getSelectedDiaryDate();
+            
+            // 讀取心情
+            const savedMood = localStorage.getItem('pmujte_diary_mood_date_' + dateStr);
+            if (savedMood) {
+                document.getElementById('diary-mood').value = savedMood;
+            } else {
+                // 如果是新的一天、完全沒寫過，預設給「平穩」
+                document.getElementById('diary-mood').value = '🌤️ 穩定推進，狀態平穩';
+            }
+
+            // 讀取日記文字
+            const savedDiary = localStorage.getItem('pmujte_diary_content_date_' + dateStr);
+            if (savedDiary) {
+                document.getElementById('diary-content').value = savedDiary;
+            } else {
+                // 如果換日了，直接呈現乾淨的「空白頁面」！
+                document.getElementById('diary-content').value = '';
+            }
+
+            // 更新左側標題日期提示
+            const titleSpan = document.getElementById('diary-current-date-title');
+            if (titleSpan) {
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                if (dateStr === todayStr) {
+                    titleSpan.textContent = '今日';
+                } else {
+                    titleSpan.textContent = dateStr.substring(5); // 顯示為 "MM-DD"
+                }
+            }
+
+            // 讀取全域記事本
+            const savedNotes = localStorage.getItem('pmujte_notes_content');
+            if (savedNotes) {
+                document.getElementById('notes-content').value = savedNotes;
+            }
+        }
+
+        // 手動選擇日期切換日記
+        window.switchDiaryDate = function () {
+            loadDailyDiaryAndNotes();
+        };
+
         // Reset planner to defaults
         window.resetPlanner = function () {
             if (confirm('確定要清除所有自訂內容並重設回預設計畫表嗎？此動作無法復原。')) {
@@ -1441,6 +1598,24 @@
                 localStorage.removeItem('pmujte_planner_start_day');
                 localStorage.removeItem('pmujte_planner_display_week');
                 location.reload();
+
+                // 在 resetPlanner 的 confirm 區塊內加入這段：
+                for (let i = 1; i <= 36; i++) {
+                    localStorage.removeItem('pmujte_diary_mood_week_' + i);
+                    localStorage.removeItem('pmujte_diary_content_week_' + i);
+                }
+                localStorage.removeItem('pmujte_notes_content');
+
+                // 清除所有日期日記
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('pmujte_diary_mood_date_') || key.startsWith('pmujte_diary_content_date_'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('pmujte_notes_content');
             }
         };
 
@@ -1545,6 +1720,20 @@
                     const val = localStorage.getItem(key);
                     if (val) collectedData[key] = val;
                 }
+
+                // 智慧打包所有按日儲存的心情日記
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('pmujte_diary_mood_date_') || key.startsWith('pmujte_diary_content_date_'))) {
+                    collectedData[key] = localStorage.getItem(key);
+                }
+            }
+            // 打包記事本
+            const notesVal = localStorage.getItem('pmujte_notes_content');
+            if (notesVal) collectedData['pmujte_notes_content'] = notesVal;
+               
+
+
                 // Collect selections
                 const dateKeys = [
                     'pmujte_planner_start_year',
@@ -1668,6 +1857,7 @@
             importPreloadedData();
             cacheBaseline();
             loadFromLocalStorage();
+            loadDailyDiaryAndNotes();
             cacheOriginalWeekTexts();
             window.updateCalculatedDates();
             window.setMode('view');
